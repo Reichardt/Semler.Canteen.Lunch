@@ -1,0 +1,82 @@
+﻿@using Semler.Canteen.Lunch.Business.Entities
+@model Semler.Canteen.Lunch.Web.Models.IndexViewModel
+
+@{ ViewData["Title"] = "Oversigt"; }
+
+<div class="bg-light">
+    <div class="container">
+        <main>
+
+            <div class="py-5 text-center">
+                <h1 class="display-5 fw-bold">👋 Hej @User.FindFirst("FullName").Value </h1>
+                <a asp-controller="User" asp-action="Logout" class="btn btn-secondary btn-sm">Log ud 🚪</a>
+            </div>
+
+            <div>
+
+            </div>
+
+            <div class="row g-5 pb-5">
+
+                <div class="col-md-7">
+                    <h4 class="mb-3">Opret bestilling</h4>
+
+                    @if (ViewData["FormError"] is not null)
+                    {
+                        <div class="alert alert-danger" role="alert">@ViewData["FormError"]</div>
+                    }
+
+                    @if (ViewData["FormSuccess"] is not null)
+                    {
+                        <div class="alert alert-success" role="alert">@ViewData["FormSuccess"]</div>
+                    }
+
+
+                    <form asp-controller="Home" asp-action="AddLunchOrder" method="post">
+                        <div asp-validation-summary="All"></div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="Date" class="form-label">Dato</label>
+                                <input asp-for="Date" type="date" class="form-control form-control-lg">
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+                            <div class="col-12">
+                                <label for="LocationId" class="form-label">Lokation</label>
+                                <select asp-for="LocationId" asp-items="@Model.LocationSelectListItems" class="form-select form-select-sm"></select>
+                                <span asp-validation-for="LocationId" class="text-danger"></span>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="col-12">
+                                <button class="w-100 btn btn-primary btn-lg" type="submit">Tilføj</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-md-5">
+
+                    <h5 class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Mine bestillinger</span>
+                    </h5>
+
+                    <ul class="list-group mb-3">
+                        @foreach (LunchOrder lunchOrder in Model.LunchOrders)
+                        {
+                            <li class="list-group-item d-flex justify-content-between lh-sm">
+                                <div>
+                                    <h6 class="my-0">@lunchOrder.Date.ToShortDateString()</h6>
+                                    <small class="text-muted">@lunchOrder.Location.Name</small>
+                                </div>
+                            </li>
+                        }
+
+                    </ul>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+</div>
