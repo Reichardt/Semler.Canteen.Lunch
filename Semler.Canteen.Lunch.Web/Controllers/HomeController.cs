@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Semler.Canteen.Lunch.Business.Entities;
 using Semler.Canteen.Lunch.Business.Exceptions;
 using Semler.Canteen.Lunch.Business.Interfaces;
 using Semler.Canteen.Lunch.Business.Services;
@@ -51,9 +53,9 @@ namespace Semler.Canteen.Lunch.Web.Controllers
                     _lunchService.AddLunchOrder(new Guid(HttpContext.User.FindFirst("Id").Value), (Guid)model.LocationId, (DateTime)model.Date);
                     ViewData["FormSuccess"] = "Din bestilling er oprettet...";
                 }
-                catch (InvalidLunchOrderDateException)
+                catch (InvalidLunchOrderDateException e)
                 {
-                    ViewData["FormError"] = "Din bestilling skal foretages mindst 2 dage før ønskede frokost dato...";
+                    ViewData["FormError"] = e.Message;
                 }
                 catch (Exception)
                 {
@@ -68,6 +70,30 @@ namespace Semler.Canteen.Lunch.Web.Controllers
             return View("Index", model);
         }
 
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteLunchOrder(IFormCollection form)
+        {
+            Guid lunchOrderId = Guid.Parse(form["LunchOrderId"]);
+            try
+            {
+                _lunchService.RemoveLunchOrderById(lunchOrderId);
+                ViewData["FormSuccess"] = "Din bestilling er slettet...";
+            }
+            catch (Exception)
+            {
+                ViewData["FormError"] = "Din bestilling er ikke slettet...";
+            }
+
+            var model = new IndexViewModel()
+            {
+                LocationSelectListItems = IndexViewModel.GetLocationListItems(_locationRepository.ListAll()),
+                LunchOrders = _lunchOrderRepository.ListAllByUserId(new Guid(HttpContext.User.FindFirst("Id").Value))
+            };
+
+            return View("Index", model);
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

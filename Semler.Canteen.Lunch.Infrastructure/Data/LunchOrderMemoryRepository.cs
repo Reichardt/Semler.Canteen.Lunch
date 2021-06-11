@@ -18,6 +18,11 @@ namespace Semler.Canteen.Lunch.Infrastructure.Data
             return entity;
         }
 
+        public void DeleteById(Guid id)
+        {
+            _lunchOrders.Remove(GetById(id));
+        }
+
         public LunchOrder GetById(Guid id)
         {
 

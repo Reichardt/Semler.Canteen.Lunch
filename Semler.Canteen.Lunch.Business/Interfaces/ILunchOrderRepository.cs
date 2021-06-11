@@ -9,6 +9,7 @@ namespace Semler.Canteen.Lunch.Business.Interfaces
     {
         LunchOrder Add(LunchOrder entity);
         LunchOrder GetById(Guid id);
+        void DeleteById(Guid id);
         IReadOnlyList<LunchOrder> ListAllByUserId(Guid id);
     }
 }

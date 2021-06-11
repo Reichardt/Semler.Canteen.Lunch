@@ -64,19 +64,23 @@
                     <ul class="list-group mb-3">
                         @foreach (LunchOrder lunchOrder in Model.LunchOrders)
                         {
-                            <li class="list-group-item d-flex justify-content-between lh-sm">
-                                <div>
-                                    <h6 class="my-0">@lunchOrder.Date.ToShortDateString()</h6>
-                                    <small class="text-muted">@lunchOrder.Location.Name</small>
-                                </div>
-                            </li>
+                                <li class="list-group-item d-flex justify-content-between lh-sm">
+                                    <div>
+                                        <h6 class="my-0">@lunchOrder.Date.ToShortDateString()</h6>
+                                        <small class="text-muted">@lunchOrder.Location.Name</small>
+                                    </div>
+                                    <div>
+                                        @using (Html.BeginForm("DeleteLunchOrder", "Home", FormMethod.Post))
+                                        {
+                                            @Html.Hidden("LunchOrderId", lunchOrder.Id)
+                                            <button type="submit" class="btn btn-danger">Slet</button>
+                                        }
+                                    </div>
+                                </li>
                         }
-
                     </ul>
                 </div>
-
             </div>
-
         </main>
     </div>
 </div>
